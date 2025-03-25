@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para nenem <3</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;        
+            text-align: center;
+            background: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        hr{
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+        /* Tela de Boas-Vindas */
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 1000;
+        }
+        .welcome-screen button {
+            padding: 25px 40px;
+            font-size: 23px;
+            background: #00000000;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 3px solid;
+        }
+        .welcome-screen button:hover {
+            background: #d400d473;
+        }
+        .hidden {
+            display: none;
+        }
+        /* Estilo do player de áudio */
+        .player-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #220020;
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+        .player-cover {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            margin-right: 15px;
+        }
+        .player-info {
+            text-align: left;
+        }
+        .player-info h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+        .progress-container {
+            width: 100%;
+            height: 5px;
+            background: #404040;
+            border-radius: 5px;
+            margin-top: 8px;
+            position: relative;
+        }
+        .progress {
+            height: 5px;
+            background: #ff01e1;
+            width: 0%;
+            border-radius: 5px;
+            position: absolute;
+        }
+        .time {
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 8px; /* Ajustado para alinhar o ícone no meio da barra */
+        }
+        .controls i {
+            font-size: 20px;
+            color: white;
+            cursor: pointer;
+            padding-top: 10px;
+        }
+        /* Carrossel */
+        #carousel-images{
+            text-align: center;
+            justify-content: center;
+        }
+        .carousel {
+            justify-content: center;
+            align-items: center;
+            width: 350px; /* Ajusta conforme necessário */
+            height: 450px;
+            overflow: hidden;
+            position: relative;
+            border-radius: 10px;
+            box-shadow: 0px 0px 50px rgba(255, 0, 217, 0.37);
+            margin-left: 6px;
+        }
+
+        .carousel-images img {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            align-items: center;
+            text-align: center;
+        }
+
+        .carousel-images img.active {
+            opacity: 1;
+        }
+
+        .heart {
+            position: fixed;
+            color: red;
+            font-size: 20px;
+            top: -50px;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        .countdown{
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Tela de Boas-Vindas -->
+    <div class="welcome-screen" id="welcome-screen">
+        <h1>💌💘</h1>
+        <button onclick="startSite()">Clique Aqui</button>
+    </div>
+    
+    <div id="content" class="hidden">
+        <!-- Player de Música -->
+        <div class="player-container">
+            <img src="foto/bruno.jpg" class="player-cover" alt="Capa da Música">
+            <div class="player-info">
+                <h3>Die With a Smile</h3>
+                <audio id="audio" src="audio/musica.mp3" autoplay></audio>
+                <div class="progress-container">
+                    <div class="progress" id="progress"></div>
+                    <!-- Ícone de controle (Play/Pause) no meio da barra -->
+                    <div class="controls" id="pauseButton" onclick="togglePlayPause()">
+                        <i id="playPauseIcon" class="fa fa-pause"></i>
+                    </div>
+                </div>
+                <div class="time">
+                    <span id="current-time">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="carousel">
+            <div class="carousel-images" id="carousel-images">
+                <img src="foto/2.jpg" alt="Imagem 1">
+                <img src="foto/1.jpg" alt="Imagem 2">
+                <img src="foto/3.jpg" alt="Imagem 3">
+                <img src="foto/4.jpg" alt="Imagem 4">
+                <img src="foto/5.jpg" alt="Imagem 5">
+            </div>
+        </div>
+        
+        <h2 class="h2">você me completou desde:</h2>
+        <!-- Contagem de Tempo -->
+        <div class="countdown" id="countdown"></div>
+        <hr>
+        <p>
+
+        </p>
+    </div>
+    
+    <script>
+        function startSite() {
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('content').classList.remove('hidden');
+            playAudio(); // Auto play assim que o site começa
+        }
+
+        function updateCountdown() {
+            const startDate = new Date(2023, 2, 29); // Março é 2 (índice baseado em zero)
+            const now = new Date();
+            
+            let years = now.getFullYear() - startDate.getFullYear();
+            let months = now.getMonth() - startDate.getMonth();
+            let days = now.getDate() - startDate.getDate();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            let seconds = now.getSeconds();
+            
+            if (days < 0) {
+                months--;
+                const lastMonth = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+                days += lastMonth;
+            }
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            
+            document.getElementById('countdown').innerHTML = 
+                `${years} anos, ${months} meses, ${days} dias, ${hours}h ${minutes}m ${seconds}s`;
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+        
+        // Controlar Play/Pause
+        let isPlaying = true;
+        const audio = document.getElementById('audio');
+        const progress = document.getElementById('progress');
+        const currentTimeElement = document.getElementById('current-time');
+        const durationElement = document.getElementById('duration');
+        const playPauseIcon = document.getElementById('playPauseIcon');
+
+        // Função para atualizar o progresso da música
+        function updateProgress() {
+            const currentTime = audio.currentTime;
+            const duration = audio.duration;
+            const progressPercent = (currentTime / duration) * 100;
+            
+            progress.style.width = progressPercent + '%';
+            currentTimeElement.textContent = formatTime(currentTime);
+            durationElement.textContent = formatTime(duration);
+        }
+
+        // Função para formatar tempo em minutos e segundos
+        function formatTime(time) {
+            const minutes = Math.floor(time / 60);
+            const seconds = Math.floor(time % 60);
+            return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+
+        // Alternar entre play e pause
+        function togglePlayPause() {
+            if (isPlaying) {
+                audio.pause();
+                playPauseIcon.classList.remove('fa-pause');
+                playPauseIcon.classList.add('fa-play');
+            } else {
+                audio.play();
+                playPauseIcon.classList.remove('fa-play');
+                playPauseIcon.classList.add('fa-pause');
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // Play o áudio automaticamente ao iniciar
+        function playAudio() {
+            audio.play();
+            playPauseIcon.classList.remove('fa-play');
+            playPauseIcon.classList.add('fa-pause');
+            isPlaying = true;
+        }
+
+         // Atualiza o progresso a cada 1 segundo
+         setInterval(updateProgress, 1000);
+
+// Carrossel de Imagens
+let currentIndex = 0;
+        const images = document.querySelectorAll('.carousel-images img');
+        const totalImages = images.length;
+
+        function changeImage() {
+            images[currentIndex].classList.remove('active'); // Esconde a imagem atual
+            currentIndex = (currentIndex + 1) % totalImages; // Passa para a próxima imagem
+            images[currentIndex].classList.add('active'); // Mostra a nova imagem
+        }
+
+        setInterval(changeImage, 3000); // Troca a imagem a cada 3 segundos
+    
+        function createHeart() {
+        const heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.innerHTML = "❤️‍🔥";
+        document.body.appendChild(heart);
+
+        // Definir posição e tamanho aleatórios
+        const size = Math.random() * 20 + 10 + "px";
+        heart.style.left = Math.random() * window.innerWidth + "px";
+        heart.style.fontSize = size;
+        heart.style.animationDuration = Math.random() * 6 + 4 + "s"; // Duração da animação
+
+        // Remover o coração após a animação
+        setTimeout(() => {
+            heart.remove();
+        }, 5000);
+    }
+
+    // Criar corações a cada 300ms
+    setInterval(createHeart, 150);
+    </script>
+</body>
+</html>
